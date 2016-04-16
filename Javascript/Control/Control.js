@@ -1,3 +1,5 @@
+var keyID = {up:0, down:1, left:2, right:3, Shoot:4};
+
 function Control(canvasName, simulation, program) {
 	this.targetSim = simulation;
 	this.targetProgram = program;
@@ -24,20 +26,29 @@ Control.prototype.createKeyboardEventHandlers = function() {
 
 		switch (keyCode) {
 			case 87: // w
-				t.triggers.thrustForwards=true;
+				t.handleMovementSchemes(keyID.up);
 				break;
 			case 65: // a
-				t.triggers.thrustAntiClockwise=true;
+				t.handleMovementSchemes(keyID.left);
 				break;
 			case 83: // s
-				t.triggers.thrustBackwards=true;
+				t.handleMovementSchemes(keyID.down);
 				break;
 			case 68: // d
-				t.triggers.thrustClockwise=true;
+				t.handleMovementSchemes(keyID.right);
 				break;
 		}
-		t.targetSim.bufferCommands(t.triggers, t.selectedUnit);
+		t.targetSim.bufferCommands(t.triggers);
 	}
+}
+Control.prototype.handleMovementSchemes = function(keyPress) {
+	var unit = this.targetSim.unit[this.selectedUnit];
+	//if (unit.shape === shapeID.sphere) {
+		if (keyPress === keyID.up) this.triggers.thrustUp=true;
+		if (keyPress === keyID.down) this.triggers.thrustDown=true;
+		if (keyPress === keyID.left) this.triggers.thrustLeft=true;
+		if (keyPress === keyID.right) this.triggers.thrustRight=true;
+	//}
 }
 
 Control.prototype.createCanvasEventHandlers = function() {

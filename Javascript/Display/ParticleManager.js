@@ -9,7 +9,7 @@ function ParticleManager(canvas) {
 
 function Particle(colour, size, x, y) {
 	this.colour = colour || "#ffffff";
-	this.size = size || random(10);
+	this.size = size || random(2)+1;
 	this.isEternal = false;
 	this.isPresent = true;
 	this.duration = 0;
@@ -17,23 +17,30 @@ function Particle(colour, size, x, y) {
 
 	this.x = x || random(window.innerWidth);
 	this.y = y || random(window.innerHeight);
-	this.vx = 0;
-	this.vy = Math.random();
+	this.vx =  Math.random()-0.5;
+	this.vy = 0;
 	this.angle = Math.random()*2*Math.PI;
 	this.vangle = Math.random()*0.1-0.05;
 }
 
-ParticleManager.prototype.createParticle = function(x, y, colour, size, type) {
+ParticleManager.prototype.createParticle = function(x, y, colour, size, type, vx, vy) {
 	x += random(10)-5;
 	y += random(10)-5;
-	size = size || random(4)+3;
+	size = size || random(2)+1;
 	var newParticle = new Particle(colour, size, x, y);
-	newParticle.vx = Math.random()-0.5;
-	newParticle.vy = Math.random()+1;
+	newParticle.duration =  Math.random()*50+50;
+	if (type === "propellant") {
+		newParticle.colour = InvertRGBString(colour);
+		newParticle.vx = -vx;
+		newParticle.vy = -vy;
+	}
+	if (type === "fall") {
+		newParticle.vx = Math.random()-0.5;
+		newParticle.vy = Math.random()+1;
+	}
 	if (type === "fly") {
 		newParticle.vx = Math.random()*2-1;
 		newParticle.vy = Math.random()*2-1;
-		newParticle.duration =  Math.random()*50+50;
 	}
 
 	this.particle.push(newParticle);
