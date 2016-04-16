@@ -1,12 +1,45 @@
-function Control(canvasName, program) {
+function Control(canvasName, simulation, program) {
+	this.targetSim = simulation;
 	this.targetProgram = program;
 	this.targetCanvas = document.getElementById(canvasName);
 	this.targetDisplay;
 
+	this.triggers = {};
+	this.selectedUnit = 0;
+
 	this.mouse = new Mouse();
 
+	this.createKeyboardEventHandlers();
 	this.createCanvasEventHandlers();
 }
+Control.prototype.createKeyboardEventHandlers = function() {
+	var t = this;
+	document.onkeydown = function (event) {
+		var keyCode;
+		if (event === null) {
+			keyCode = window.event.keyCode;
+		} else {
+			keyCode = event.keyCode;
+		}
+
+		switch (keyCode) {
+			case 87: // w
+				t.triggers.thrustForwards=true;
+				break;
+			case 65: // a
+				t.triggers.thrustAntiClockwise=true;
+				break;
+			case 83: // s
+				t.triggers.thrustBackwards=true;
+				break;
+			case 68: // d
+				t.triggers.thrustClockwise=true;
+				break;
+		}
+		t.targetSim.bufferCommands(t.triggers, t.selectedUnit);
+	}
+}
+
 Control.prototype.createCanvasEventHandlers = function() {
 	var t = this;
 	this.targetCanvas.onmousemove = function (event) {t.mouseUpdateCoords(event);};
@@ -15,6 +48,7 @@ Control.prototype.createCanvasEventHandlers = function() {
 Control.prototype.update = function() {
 	this.mouse.isMoving = false;
 	this.mouse.isPressed = false;
+	this.triggers = {};
 }
 
 function Mouse() {
@@ -33,5 +67,5 @@ Control.prototype.mouseUpdateCoords = function (event) {
 Control.prototype.mousePressed = function (event) {
     this.mouse.buttonPressed = event.which;
     this.mouse.isPressed = true;
-	this.targetProgram.soundSystem.createHarmonicNote();
+	this.targetProgram.soundSystem.createHarmonicNote(1);
 }

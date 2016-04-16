@@ -31,19 +31,19 @@ SoundSystem.prototype.update = function() {
 	this.tone = newTone;
 
 }
-SoundSystem.prototype.createHarmonicNote = function() {
-	var note = randomHarmonicNote();
+SoundSystem.prototype.createHarmonicNote = function(octave) {
+	var note = randomHarmonicNote(octave);
 	this.tone.push(new Tone(this.ctx, note));
 }
-function randomHarmonicNote() {
+function randomHarmonicNote(octave) {
 	var notes = [0,3,5,7,10];
-	var octave = random(4);
+	octave = octave || random(4);
 	return randomChoice(notes)+octave*12+12;
 }
 
 
 function Tone(context, noteID) {
-	this.duration = random(10);
+	this.duration = 25;
 	this.timeSpent = 0;
 
 	this.oscillator = context.createOscillator();

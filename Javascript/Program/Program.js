@@ -6,11 +6,14 @@ function loadProgram() {
 function Program(canvasName) {
 	this.updateDelay = 20;
 
+	this.simulation = new Simulation();
+
 	this.soundSystem = new SoundSystem();
-	this.control = new Control(canvasName, this);
-	this.display = new Display(canvasName, this.control);
+	this.control = new Control(canvasName, this.simulation, this);
+	this.display = new Display(canvasName, this.simulation, this.control);
 }
 Program.prototype.update = function() {
+	this.simulation.update();
 	this.soundSystem.update();
 	this.display.refresh();
 	this.control.update();
