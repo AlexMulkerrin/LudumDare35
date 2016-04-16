@@ -2,7 +2,7 @@ function SoundSystem() {
 	this.ctx = new AudioContext();
 	this.tone = [];
 	for (var i=0; i<1; i++) {
-		var note = random(88);
+		var note = randomHarmonicNote();
 		this.tone[i] = new Tone(this.ctx, note);
 	}
 
@@ -10,13 +10,17 @@ function SoundSystem() {
 SoundSystem.prototype.update = function() {
 	for (var i=0; i<this.tone.length; i++) {
 		if (this.tone[i].isPlaying) {
-			this.tone[i].fade();
+			var tone = this.tone[i];
+			tone.timeSpent++;
+			if (tone.timeSpent>tone.duration) {
+				this.tone[i].fade();
+			}
 		}
 	}
-	if (Math.random()>0.99 && this.tone.length<10) {
-		var note = random(7)*12;
+	/*if (Math.random()>0.99 && this.tone.length<10) {
+		var note = randomHarmonicNote();
 		this.tone.push(new Tone(this.ctx, note));
-	}
+	}*/
 	// remove finished tones
 	var newTone = [];
 	for (var i=0; i<this.tone.length; i++) {
@@ -27,8 +31,21 @@ SoundSystem.prototype.update = function() {
 	this.tone = newTone;
 
 }
+SoundSystem.prototype.createHarmonicNote = function() {
+	var note = randomHarmonicNote();
+	this.tone.push(new Tone(this.ctx, note));
+}
+function randomHarmonicNote() {
+	var notes = [0,3,5,7,10];
+	var octave = random(4);
+	return randomChoice(notes)+octave*12+12;
+}
+
 
 function Tone(context, noteID) {
+	this.duration = random(10);
+	this.timeSpent = 0;
+
 	this.oscillator = context.createOscillator();
 	this.oscillator.type = "triangle";
 	this.oscillator.frequency.value = noteFrequency(noteID);
@@ -45,7 +62,6 @@ Tone.prototype.fade = function() {
 	if (this.gainNode.gain.value < 0.0001) {
 		this.isPlaying = false;
 		this.gainNode.disconnect();
-		console.log("gone");
 	}
 }
 

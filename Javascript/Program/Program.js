@@ -7,9 +7,11 @@ function Program(canvasName) {
 	this.updateDelay = 20;
 
 	this.soundSystem = new SoundSystem();
-	this.display = new Display(canvasName);
+	this.control = new Control(canvasName, this);
+	this.display = new Display(canvasName, this.control);
 }
 Program.prototype.update = function() {
 	this.soundSystem.update();
 	this.display.refresh();
+	this.control.update();
 }
